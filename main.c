@@ -1,71 +1,72 @@
-// ContactManagementSystem.c
+// HangmanGame.c
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
+#include <time.h>
 
-#define MAX_CONTACTS 100
+#define MAX_ATTEMPTS 6
+#define WORDS_COUNT 10
 
-// Structure to represent a contact
-struct Contact {
-    char name[50];
-    char phone[15];
-    char email[50];
+const char* words[] = {
+    "apple",
+    "banana",
+    "chocolate",
+    "elephant",
+    "giraffe",
+    "hamburger",
+    "keyboard",
+    "landscape",
+    "pineapple",
+    "watermelon"
 };
 
-// Function to display a contact
-void displayContact(struct Contact contact) {
-    printf("Name: %s\n", contact.name);
-    printf("Phone: %s\n", contact.phone);
-    printf("Email: %s\n", contact.email);
+// Function to randomly select a word from the list
+const char* getRandomWord() {
+    int randomIndex = rand() % WORDS_COUNT;
+    return words[randomIndex];
 }
 
 int main() {
-    struct Contact contacts[MAX_CONTACTS];
-    int numContacts = 0;
-    int choice;
+    srand(time(0));
+    const char* wordToGuess = getRandomWord();
+    int wordLength = strlen(wordToGuess);
+    char guessedWord[wordLength];
+    int attempts = 0;
 
-    while (1) {
-        printf("Contact Management System\n");
-        printf("1. Add Contact\n");
-        printf("2. View Contacts\n");
-        printf("3. Exit\n");
-        printf("Enter your choice: ");
-        scanf("%d", &choice);
+    for (int i = 0; i < wordLength; i++) {
+        guessedWord[i] = '_';
+    }
+    guessedWord[wordLength] = '\0';
 
-        switch (choice) {
-            case 1:
-                if (numContacts < MAX_CONTACTS) {
-                    struct Contact newContact;
-                    printf("Enter Name: ");
-                    scanf(" %[^\n]", newContact.name);
-                    printf("Enter Phone: ");
-                    scanf(" %[^\n]", newContact.phone);
-                    printf("Enter Email: ");
-                    scanf(" %[^\n]", newContact.email);
+    printf("Welcome to Hangman!\n");
 
-                    contacts[numContacts] = newContact;
-                    numContacts++;
-                    printf("Contact added successfully.\n");
-                } else {
-                    printf("Contact limit reached. Cannot add more contacts.\n");
-                }
-                break;
-            case 2:
-                if (numContacts == 0) {
-                    printf("No contacts available.\n");
-                } else {
-                    printf("Contacts List:\n");
-                    for (int i = 0; i < numContacts; i++) {
-                        printf("Contact %d:\n", i + 1);
-                        displayContact(contacts[i]);
-                    }
-                }
-                break;
-            case 3:
-                printf("Exiting the Contact Management System.\n");
-                return 0;
-            default:
-                printf("Invalid choice. Please try again.\n");
+    while (attempts < MAX_ATTEMPTS) {
+        printf("Word to Guess: %s\n", guessedWord);
+        char guess;
+        printf("Enter a letter: ");
+        scanf(" %c", &guess);
+
+        int found = 0;
+        for (int i = 0; i < wordLength; i++) {
+            if (wordToGuess[i] == guess) {
+                guessedWord[i] = guess;
+                found = 1;
+            }
         }
+
+        if (!found) {
+            attempts++;
+            printf("Incorrect guess. Attempts remaining: %d\n", MAX_ATTEMPTS - attempts);
+        }
+
+        if (strcmp(wordToGuess, guessedWord) == 0) {
+            printf("Congratulations! You've guessed the word: %s\n", wordToGuess);
+            break;
+        }
+    }
+
+    if (attempts >= MAX_ATTEMPTS) {
+        printf("You're out of attempts! The word was: %s\n", wordToGuess);
     }
 
     return 0;
