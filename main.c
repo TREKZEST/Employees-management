@@ -1,107 +1,78 @@
-// LibraryManagementSystem.c
+// StudentGradeBook.c
 #include <stdio.h>
-#include <string.h>
 
-#define MAX_BOOKS 100
+#define MAX_STUDENTS 50
 
-// Structure to represent a book
-struct Book {
-    char title[100];
-    char author[50];
-    int year;
-};
+// Function to calculate the average of an array of grades
+float calculateAverage(int grades[], int numStudents) {
+    float sum = 0;
+    for (int i = 0; i < numStudents; i++) {
+        sum += grades[i];
+    }
+    return sum / numStudents;
+}
 
-// Function to display a book
-void displayBook(struct Book book) {
-    printf("Title: %s\n", book.title);
-    printf("Author: %s\n", book.author);
-    printf("Year: %d\n", book.year);
+// Function to find the highest score in an array of grades
+int findHighest(int grades[], int numStudents) {
+    int highest = grades[0];
+    for (int i = 1; i < numStudents; i++) {
+        if (grades[i] > highest) {
+            highest = grades[i];
+        }
+    }
+    return highest;
+}
+
+// Function to find the lowest score in an array of grades
+int findLowest(int grades[], int numStudents) {
+    int lowest = grades[0];
+    for (int i = 1; i < numStudents; i++) {
+        if (grades[i] < lowest) {
+            lowest = grades[i];
+        }
+    }
+    return lowest;
 }
 
 int main() {
-    struct Book library[MAX_BOOKS];
-    int numBooks = 0;
+    int grades[MAX_STUDENTS];
+    int numStudents;
     int choice;
 
+    printf("Student Grade Book\n");
+    printf("Enter the number of students: ");
+    scanf("%d", &numStudents);
+
+    if (numStudents > MAX_STUDENTS) {
+        printf("Maximum number of students exceeded.\n");
+        return 1;
+    }
+
+    for (int i = 0; i < numStudents; i++) {
+        printf("Enter the grade for Student %d: ", i + 1);
+        scanf("%d", &grades[i]);
+    }
+
     while (1) {
-        printf("Library Management System\n");
-        printf("1. Add Book\n");
-        printf("2. Display Books\n");
-        printf("3. Search by Title\n");
-        printf("4. Search by Author\n");
-        printf("5. Exit\n");
+        printf("1. Calculate Average\n");
+        printf("2. Find Highest Score\n");
+        printf("3. Find Lowest Score\n");
+        printf("4. Exit\n");
         printf("Enter your choice: ");
         scanf("%d", &choice);
 
         switch (choice) {
             case 1:
-                if (numBooks < MAX_BOOKS) {
-                    struct Book newBook;
-                    printf("Enter Title: ");
-                    scanf(" %[^\n]", newBook.title);
-                    printf("Enter Author: ");
-                    scanf(" %[^\n]", newBook.author);
-                    printf("Enter Year: ");
-                    scanf("%d", &newBook.year);
-
-                    library[numBooks] = newBook;
-                    numBooks++;
-                    printf("Book added successfully.\n");
-                } else {
-                    printf("Library is full. Cannot add more books.\n");
-                }
+                printf("Average Grade: %.2f\n", calculateAverage(grades, numStudents));
                 break;
             case 2:
-                if (numBooks == 0) {
-                    printf("Library is empty.\n");
-                } else {
-                    printf("Books in the Library:\n");
-                    for (int i = 0; i < numBooks; i++) {
-                        printf("Book %d:\n", i + 1);
-                        displayBook(library[i]);
-                    }
-                }
+                printf("Highest Score: %d\n", findHighest(grades, numStudents));
                 break;
             case 3:
-                if (numBooks == 0) {
-                    printf("Library is empty.\n");
-                } else {
-                    char searchTitle[100];
-                    printf("Enter the title to search: ");
-                    scanf(" %[^\n]", searchTitle);
-                    int found = 0;
-                    for (int i = 0; i < numBooks; i++) {
-                        if (strcmp(searchTitle, library[i].title) == 0) {
-                            displayBook(library[i]);
-                            found = 1;
-                        }
-                    }
-                    if (!found) {
-                        printf("Book not found with that title.\n");
-                    }
-                }
+                printf("Lowest Score: %d\n", findLowest(grades, numStudents));
                 break;
             case 4:
-                if (numBooks == 0) {
-                    printf("Library is empty.\n");
-                } else {
-                    char searchAuthor[50];
-                    printf("Enter the author to search: ");
-                    scanf(" %[^\n]", searchAuthor);
-                    int found = 0;
-                    for (int i = 0; i < numBooks; i++) {
-                        if (strcmp(searchAuthor, library[i].author) == 0) {
-                            displayBook(library[i]);
-                            found = 1;
-                        }
-                    }
-                    if (!found) {
-                        printf("Book not found by that author.\n");
-                    }
-                }
-                break;
-            case 5:
-                printf("Exiting the Library Management System.\n");
+                printf("Exiting the Student Grade Book.\n");
                 return 0;
             default:
                 printf("Invalid choice. Please try again.\n");
