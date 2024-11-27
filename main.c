@@ -1,98 +1,132 @@
-// C program for the above approach
-#include <math.h>
+// C program to implement hangman game
+#include <ctype.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <time.h>
- 
-// Function to implement the game
-int game(char you, char computer)
-{
-    // If both the user and computer
-    // has choose the same thing
-    if (you == computer)
-        return -1;
- 
-    // If user's choice is stone and
-    // computer's choice is paper
-    if (you == 's' && computer == 'p')
-        return 0;
- 
-            // If user's choice is paper and
-            // computer's choice is stone
-            else if (you == 'p' && computer == 's') return 1;
- 
-    // If user's choice is stone and
-    // computer's choice is scissor
-    if (you == 's' && computer == 'z')
-        return 1;
- 
-    // If user's choice is scissor and
-    // computer's choice is stone
-    else if (you == 'z' && computer == 's')
-        return 0;
- 
-    // If user's choice is paper and
-    // computer's choice is scissor
-    if (you == 'p' && computer == 'z')
-        return 0;
- 
-    // If user's choice is scissor and
-    // computer's choice is paper
-    else if (you == 'z' && computer == 'p')
-        return 1;
-}
- 
-// Driver Code
+
+#define MAX_WORD_LENGTH 50
+#define MAX_TRIES 6
+
+// Struct to hold a word and its hint
+struct WordWithHint {
+    char word[MAX_WORD_LENGTH];
+    char hint[MAX_WORD_LENGTH];
+};
+
+// Function to display the current state of the word
+void displayWord(const char word[], const bool guessed[]);
+
+// Function to draw the hangman
+void drawHangman(int tries);
+
+// driver code
 int main()
 {
-    // Stores the random number
-    int n;
- 
-    char you, computer, result;
- 
-    // Chooses the random number
-    // every time
+    // Seed the random number generator with the current
+    // time
     srand(time(NULL));
- 
-    // Make the random number less
-    // than 100, divided it by 100
-    n = rand() % 100;
- 
-    // Using simple probability 100 is
-    // roughly divided among stone,
-    // paper, and scissor
-    if (n < 33)
- 
-        // s is denoting Stone
-        computer = 's';
- 
-    else if (n > 33 && n < 66)
- 
-        // p is denoting Paper
-        computer = 'p';
- 
-    // z is denoting Scissor
-    else
-        computer = 'z';
- 
-    printf("\n\n\n\n\t\t\t\tEnter s for STONE, p for PAPER and z for SCISSOR\n\t\t\t\t\t\t\t");
- 
-    // input from the user
-    scanf("%c", &you);
- 
-    // Function Call to play the game
-    result = game(you, computer);
- 
-    if (result == -1) {
-        printf("\n\n\t\t\t\tGame Draw!\n");
+    // Array of words with hints
+    struct WordWithHint wordList[] = {
+        { "geeksforgeeks", "Computer coding" },
+        { "elephant", "A large mammal with a trunk" },
+        { "pizza", "A popular Italian dish" },
+        { "beach", "Sandy shore by the sea" },
+        // Add more words and hints here
+    };
+
+    // Select a random word from the list
+    int wordIndex = rand() % 4;
+
+    const char* secretWord = wordList[wordIndex].word;
+    const char* hint = wordList[wordIndex].hint;
+
+    int wordLength = strlen(secretWord);
+    char guessedWord[MAX_WORD_LENGTH] = { 0 };
+    bool guessedLetters[26] = { false };
+
+    printf("Welcome to Hangman!\n");
+    printf("Hint: %s\n", hint);
+
+    int tries = 0;
+
+    while (tries < MAX_TRIES) {
+        printf("\n");
+        displayWord(guessedWord, guessedLetters);
+        drawHangman(tries);
+
+        char guess;
+        printf("Enter a letter: ");
+        scanf(" %c", &guess);
+        guess = tolower(guess);
+
+        if (guessedLetters[guess - 'a']) {
+            printf("You've already guessed that letter. "
+                   "Try again.\n");
+            continue;
+        }
+
+        guessedLetters[guess - 'a'] = true;
+
+        bool found = false;
+        for (int i = 0; i < wordLength; i++) {
+            if (secretWord[i] == guess) {
+                found = true;
+                guessedWord[i] = guess;
+            }
+        }
+
+        if (found) {
+            printf("Good guess!\n");
+        }
+        else {
+            printf("Sorry, the letter '%c' is not in the "
+                   "word.\n",
+                   guess);
+            tries++;
+        }
+
+        if (strcmp(secretWord, guessedWord) == 0) {
+            printf("\nCongratulations! You've guessed the "
+                   "word: %s\n",
+                   secretWord);
+            break;
+        }
     }
-    else if (result == 1) {
-        printf("\n\n\t\t\t\tWow! You have won the game!\n");
+
+    if (tries >= MAX_TRIES) {
+        printf("\nSorry, you've run out of tries. The word "
+               "was: %s\n",
+               secretWord);
     }
-    else { 
-        printf("\n\n\t\t\t\tOh! You have lost the game!\n");
-    }
-        printf("\t\t\t\tYOu choose : %c and Computer choose : %c\n",you, computer);
- 
+
     return 0;
+}
+
+void displayWord(const char word[], const bool guessed[])
+{
+    printf("Word: ");
+    for (int i = 0; word[i] != '\0'; i++) {
+        if (guessed[word[i] - 'a']) {
+            printf("%c ", word[i]);
+        }
+        else {
+            printf("_ ");
+        }
+    }
+    printf("\n");
+}
+
+void drawHangman(int tries)
+{
+    const char* hangmanParts[]
+        = { "     _________",    "    |         |",
+            "    |         O",   "    |        /|\\",
+            "    |        / \\", "    |" };
+
+    printf("\n");
+    for (int i = 0; i <= tries; i++) {
+        printf("%s\n", hangmanParts[i]);
+    }
 }
