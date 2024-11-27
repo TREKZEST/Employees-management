@@ -1,83 +1,98 @@
-// StudentGradeBook.c
+// C program for the above approach
+#include <math.h>
 #include <stdio.h>
-
-#define MAX_STUDENTS 50
-
-// Function to calculate the average of an array of grades
-float calculateAverage(int grades[], int numStudents) {
-    float sum = 0;
-    for (int i = 0; i < numStudents; i++) {
-        sum += grades[i];
-    }
-    return sum / numStudents;
-}
-
-// Function to find the highest score in an array of grades
-int findHighest(int grades[], int numStudents) {
-    int highest = grades[0];
-    for (int i = 1; i < numStudents; i++) {
-        if (grades[i] > highest) {
-            highest = grades[i];
-        }
-    }
-    return highest;
-}
-
-// Function to find the lowest score in an array of grades
-int findLowest(int grades[], int numStudents) {
-    int lowest = grades[0];
-    for (int i = 1; i < numStudents; i++) {
-        if (grades[i] < lowest) {
-            lowest = grades[i];
-        }
-    }
-    return lowest;
-}
-
-int main() {
-    int grades[MAX_STUDENTS];
-    int numStudents;
-    int choice;
-
-    printf("Student Grade Book\n");
-    printf("Enter the number of students: ");
-    scanf("%d", &numStudents);
-
-    if (numStudents > MAX_STUDENTS) {
-        printf("Maximum number of students exceeded.\n");
+#include <stdlib.h>
+#include <time.h>
+ 
+// Function to implement the game
+int game(char you, char computer)
+{
+    // If both the user and computer
+    // has choose the same thing
+    if (you == computer)
+        return -1;
+ 
+    // If user's choice is stone and
+    // computer's choice is paper
+    if (you == 's' && computer == 'p')
+        return 0;
+ 
+            // If user's choice is paper and
+            // computer's choice is stone
+            else if (you == 'p' && computer == 's') return 1;
+ 
+    // If user's choice is stone and
+    // computer's choice is scissor
+    if (you == 's' && computer == 'z')
         return 1;
+ 
+    // If user's choice is scissor and
+    // computer's choice is stone
+    else if (you == 'z' && computer == 's')
+        return 0;
+ 
+    // If user's choice is paper and
+    // computer's choice is scissor
+    if (you == 'p' && computer == 'z')
+        return 0;
+ 
+    // If user's choice is scissor and
+    // computer's choice is paper
+    else if (you == 'z' && computer == 'p')
+        return 1;
+}
+ 
+// Driver Code
+int main()
+{
+    // Stores the random number
+    int n;
+ 
+    char you, computer, result;
+ 
+    // Chooses the random number
+    // every time
+    srand(time(NULL));
+ 
+    // Make the random number less
+    // than 100, divided it by 100
+    n = rand() % 100;
+ 
+    // Using simple probability 100 is
+    // roughly divided among stone,
+    // paper, and scissor
+    if (n < 33)
+ 
+        // s is denoting Stone
+        computer = 's';
+ 
+    else if (n > 33 && n < 66)
+ 
+        // p is denoting Paper
+        computer = 'p';
+ 
+    // z is denoting Scissor
+    else
+        computer = 'z';
+ 
+    printf("\n\n\n\n\t\t\t\tEnter s for STONE, p for PAPER and z for SCISSOR\n\t\t\t\t\t\t\t");
+ 
+    // input from the user
+    scanf("%c", &you);
+ 
+    // Function Call to play the game
+    result = game(you, computer);
+ 
+    if (result == -1) {
+        printf("\n\n\t\t\t\tGame Draw!\n");
     }
-
-    for (int i = 0; i < numStudents; i++) {
-        printf("Enter the grade for Student %d: ", i + 1);
-        scanf("%d", &grades[i]);
+    else if (result == 1) {
+        printf("\n\n\t\t\t\tWow! You have won the game!\n");
     }
-
-    while (1) {
-        printf("1. Calculate Average\n");
-        printf("2. Find Highest Score\n");
-        printf("3. Find Lowest Score\n");
-        printf("4. Exit\n");
-        printf("Enter your choice: ");
-        scanf("%d", &choice);
-
-        switch (choice) {
-            case 1:
-                printf("Average Grade: %.2f\n", calculateAverage(grades, numStudents));
-                break;
-            case 2:
-                printf("Highest Score: %d\n", findHighest(grades, numStudents));
-                break;
-            case 3:
-                printf("Lowest Score: %d\n", findLowest(grades, numStudents));
-                break;
-            case 4:
-                printf("Exiting the Student Grade Book.\n");
-                return 0;
-            default:
-                printf("Invalid choice. Please try again.\n");
-        }
+    else { 
+        printf("\n\n\t\t\t\tOh! You have lost the game!\n");
     }
-
+        printf("\t\t\t\tYOu choose : %c and Computer choose : %c\n",you, computer);
+ 
     return 0;
 }
